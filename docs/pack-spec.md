@@ -17,7 +17,7 @@ Each board: `id`, `question`, `answers[{text, pts}]`, optional `source`.
 
 | Field | Meaning |
 |---|---|
-| `targetPoints` | Auto-win score, or `null` for no auto-win |
+| `targetPoints` | Default auto-win score, or `null` for no auto-win. Host can change **Win at** during the show. |
 | `hostCanEnd` | Show the **End game** button |
 | `onTarget` | `banner` = sticky overlay, keep playing; `endAndMaybeLightning` = end the main game (then lightning if enabled) |
 
@@ -25,7 +25,7 @@ Each board: `id`, `question`, `answers[{text, pts}]`, optional `source`.
 
 | Field | Meaning |
 |---|---|
-| `enabled` | If false, none of the lightning UI is shown |
+| `enabled` | Default for the host **Lightning round** checkbox. If the pack has lightning `questions`, the host can turn it on or off live. |
 | `target` | Combined points needed (classic **200**) |
 | `player1Seconds` / `player2Seconds` | 15 / 20 classic |
 | `steal` | Other family gets one guess on a double-miss |

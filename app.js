@@ -51,7 +51,12 @@
 
   function lightningOn() {
     const l = lightningCfg();
-    return l.enabled && l.questions.length > 0;
+    const on = state && state.hostLightning != null ? !!state.hostLightning : !!l.enabled;
+    return on && l.questions.length > 0;
+  }
+
+  function hasLightningQuestions() {
+    return lightningCfg().questions.length > 0;
   }
 
   function emptyLightning() {
@@ -98,6 +103,8 @@
       overlaySticky: false,
       phase: "main",
       lightning: emptyLightning(),
+      hostTargetPoints: winCfg().targetPoints != null ? winCfg().targetPoints : null,
+      hostLightning: !!lightningCfg().enabled,
     };
   }
 
@@ -199,6 +206,11 @@
   }
 
   function targetPoints() {
+    if (state && Object.prototype.hasOwnProperty.call(state, "hostTargetPoints")) {
+      const t = state.hostTargetPoints;
+      if (t === "" || t == null || Number.isNaN(Number(t))) return null;
+      return Number(t);
+    }
     const t = winCfg().targetPoints;
     return t == null ? null : Number(t);
   }
@@ -288,8 +300,24 @@
     play("ding");
   }
 
+  function showdownStrike() {
+    if (!board() || state.phase !== "main" || state.roundAwarded) return;
+    const history = state.history.concat([{ type: "showdown" }]);
+    const event = { t: Date.now(), kind: "buzz", strikes: 0, showdown: true };
+    patch({
+      overlay: "x",
+      overlayText: "X",
+      overlaySticky: false,
+      history,
+      event,
+    });
+    play("buzz");
+    scheduleOverlayClear();
+  }
+
   function strike() {
     if (!board() || state.phase !== "main" || state.roundAwarded) return;
+    if (state.strikes >= 3) return;
     const strikes = Math.min(3, state.strikes + 1);
     const overlay = "x";
     const overlayText = "X".repeat(strikes);
@@ -374,6 +402,8 @@
       revealed[last.i] = false;
       leftover[last.i] = false;
       patch({ revealed, leftover, history, roundAwarded: false, awardedTo: null });
+    } else if (last.type === "showdown") {
+      patch({ overlay: null, history });
     } else if (last.type === "strike") {
       patch({ strikes: Math.max(0, state.strikes - 1), overlay: null, history });
     } else if (last.type === "leftover") {
@@ -452,6 +482,8 @@
       backups: state.backups,
       focusBoard: state.focusBoard,
       hopBack: state.hopBack,
+      hostTargetPoints: state.hostTargetPoints,
+      hostLightning: state.hostLightning,
     });
   }
 
@@ -917,6 +949,18 @@
           <label>Team A <input type="text" id="nameA" value="${escapeAttr(state.nameA)}"></label>
           <label>Team B <input type="text" id="nameB" value="${escapeAttr(state.nameB)}"></label>
         </div>
+        <div class="row">
+          <label>Win at <input type="number" id="targetPts" min="1" step="1" placeholder="none" value="${
+            t == null ? "" : t
+          }" style="width:88px"></label>
+          <label title="${
+            hasLightningQuestions()
+              ? "Play Fast Money after End game or hitting the win score"
+              : "This pack has no lightning questions"
+          }"><input type="checkbox" id="hostLightning" ${state.hostLightning ? "checked" : ""} ${
+            hasLightningQuestions() ? "" : "disabled"
+          }> Lightning round</label>
+        </div>
         <div class="scores-mini">${escapeHtml(state.nameA)} <strong>${state.scoreA}</strong>
           &nbsp;·&nbsp; Round <strong>${rawRoundPoints()}</strong>${multiplier() > 1 ? " × " + multiplier() + " = <strong>" + roundPoints() + "</strong>" : ""}
           &nbsp;·&nbsp; ${escapeHtml(state.nameB)} <strong>${state.scoreB}</strong>
@@ -948,7 +992,10 @@
             ? `<p><strong>${b.id}</strong> — ${escapeHtml(b.question)}<br><em>${escapeHtml(b.source || "")}</em></p>
                <div class="answers">${ans}</div>
                <div class="row">
-                 <button type="button" id="strike" class="danger">Strike / not on board (X)</button>
+                 <button type="button" id="showdown" class="danger">Showdown X (no strike)</button>
+                 <button type="button" id="strike" class="danger" ${state.strikes >= 3 ? "disabled" : ""}>Family play X (${
+                   Math.min(3, state.strikes + 1)
+                 } of 3)</button>
                  <button type="button" id="undo">Undo</button>
                  <button type="button" id="left">Reveal leftovers</button>
                </div>
@@ -956,7 +1003,7 @@
                  <button type="button" id="awardA" ${state.roundAwarded ? "disabled" : ""}>Award round to ${escapeHtml(state.nameA)}</button>
                  <button type="button" id="awardB" ${state.roundAwarded ? "disabled" : ""}>Award round to ${escapeHtml(state.nameB)}</button>
                </div>
-               <p class="hint">Award the round, then reveal leftovers (leftovers do not add points). Strikes: ${state.strikes} / 3 ${state.strikes >= 3 ? "— steal is open. If they miss, award the family that was playing." : ""}</p>`
+               <p class="hint">Showdown X is the face-off miss (does not count toward 3). Family play X is after a family is playing. Award the round, then reveal leftovers (leftovers do not add points). Family strikes: ${state.strikes} / 3 ${state.strikes >= 3 ? "— steal is open. If they miss, award the family that was playing." : ""}</p>`
             : `<p class="hint">${rem.length ? "Pick Start / random, then Show question." : "No boards left in the pool. Restart or enable a backup."}</p>`
         }
       </div>
@@ -977,6 +1024,8 @@
     document.querySelectorAll("[data-reveal]").forEach((el) => {
       el.onclick = () => reveal(Number(el.getAttribute("data-reveal")));
     });
+    const sd = document.getElementById("showdown");
+    if (sd) sd.onclick = showdownStrike;
     const st = document.getElementById("strike");
     if (st) st.onclick = strike;
     const u = document.getElementById("undo");
@@ -1023,6 +1072,15 @@
     const nB = document.getElementById("nameB");
     if (nA) nA.onchange = (e) => patch({ nameA: e.target.value || families().a });
     if (nB) nB.onchange = (e) => patch({ nameB: e.target.value || families().b });
+    const tp = document.getElementById("targetPts");
+    if (tp)
+      tp.onchange = (e) => {
+        const raw = String(e.target.value || "").trim();
+        const n = raw === "" ? null : Number(raw);
+        patch({ hostTargetPoints: n == null || Number.isNaN(n) || n < 1 ? null : n });
+      };
+    const hl = document.getElementById("hostLightning");
+    if (hl) hl.onchange = (e) => patch({ hostLightning: e.target.checked });
   }
 
   function renderLightningPickHost() {

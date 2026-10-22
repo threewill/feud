@@ -20,7 +20,9 @@ Do not double-click the HTML (`file://` cannot fetch packs).
 - Schema: [`packs/schema.json`](packs/schema.json)
 - How to author / import: [`docs/pack-spec.md`](docs/pack-spec.md)
 
-`win.targetPoints`, `win.hostCanEnd`, and `lightning.enabled` are pack fields — no code change required for a new survey.
+Pack defaults: `win.targetPoints`, `win.hostCanEnd`, `lightning.enabled`. On the host page you can change **Win at** (blank = no auto-win) and **Lightning round** for this show. Those stick through Restart.
+
+Face-off misses use **Showdown X** (overlay only, not one of the three). After a family is playing, **Family play X (n of 3)** is the strike that counts.
 
 ## Import a Microsoft Forms survey
 
