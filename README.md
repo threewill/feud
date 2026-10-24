@@ -40,3 +40,7 @@ python -m pytest -q
 ## Sounds
 
 Synthesized CC0-style ding/buzzer in `sounds/` (not Family Feud rips). See `sounds/README.md`.
+
+## License
+
+[MIT](LICENSE). Not affiliated with Family Feud.
