@@ -1,0 +1,20 @@
+---
+description: Microsoft Learn MCP — ground Microsoft product answers in official docs when available
+alwaysApply: true
+---
+
+# Pointer — mcp-microsoft-learn
+
+Follow the vendored ThreeWill engineering standard:
+
+[`docs/agent/standards/mcp-microsoft-learn.mdc`](../../docs/agent/standards/mcp-microsoft-learn.mdc)
+
+Human-readable copy: [`docs/agent/standards/docs/mcp/microsoft-learn.md`](../../docs/agent/standards/docs/mcp/microsoft-learn.md).
+
+Do **not** edit `docs/agent/standards/` by hand (sync PRs refresh it). Product-only overrides live in `docs/agent/` and root `AGENTS.md`.
+
+If a path inside the vendored file says `.cursor/rules/...`, read `docs/agent/standards/...` instead.
+
+## This product
+
+Use Learn when answering Microsoft Forms, Teams window-share, or other Microsoft-platform questions. The board itself is local static files; Forms is import-only.

@@ -1,0 +1,18 @@
+---
+description: CI minutes budget — keep GitHub Actions minutes low with path filters, concurrency, and no duplicate PR/push builds
+alwaysApply: true
+---
+
+# Pointer — ci-minutes-budget
+
+Follow the vendored ThreeWill engineering standard:
+
+[`docs/agent/standards/ci-minutes-budget.mdc`](../../docs/agent/standards/ci-minutes-budget.mdc)
+
+Do **not** edit `docs/agent/standards/` by hand (sync PRs refresh it). Product-only overrides live in `docs/agent/` and root `AGENTS.md`.
+
+If a path inside the vendored file says `.cursor/rules/...`, read `docs/agent/standards/...` instead.
+
+## This product
+
+There are **no** GitHub Actions workflows yet. Do not add any in a docs-only change. If a later PR adds pytest CI, follow this standard (path filters, concurrency, pull_request only, skip drafts, pip cache, `timeout-minutes`) and estimate billed minutes. See `roadmap/BACKLOG.md` TD-02.
