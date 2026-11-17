@@ -1,0 +1,18 @@
+---
+description: Generated image preview-and-approve gate (any image-generation tool)
+alwaysApply: true
+---
+
+# Pointer — generated-image-preview
+
+Follow the vendored ThreeWill engineering standard:
+
+[`docs/agent/standards/generated-image-preview.mdc`](../../docs/agent/standards/generated-image-preview.mdc)
+
+Do **not** edit `docs/agent/standards/` by hand (sync PRs refresh it). Product-only overrides live in `docs/agent/` and root `AGENTS.md`.
+
+If a path inside the vendored file says `.cursor/rules/...`, read `docs/agent/standards/...` instead.
+
+## This product
+
+Do not ship official Family Feud logos or sound rips. Do not replace `docs/screenshots/` without an explicit request; the host shot is a known stale capture (UX-01).

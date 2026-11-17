@@ -1,12 +1,16 @@
-# Feud
+# ThreeWill Feud
 
 A local **host + audience** board for a Family Feud–style show. You drive the game from a private host page; the room sees a separate window you share in Teams (or a projector). Surveys load from a **JSON pack** on disk — any set of questions, not just the sample.
 
 **Not** official Family Feud. No licensed logos or rips; ding/X are synthesized CC0-style stand-ins.
 
+Product copy: [`Shelf-Details.md`](Shelf-Details.md). Feature list: [`docs/FEATURES.md`](docs/FEATURES.md). Roadmap: [`roadmap/ROADMAP.md`](roadmap/ROADMAP.md).
+
 ![Host — answers, strikes, award](docs/screenshots/host.png)
 
 ![Audience — numbered board, scores, clock](docs/screenshots/audience.png)
+
+The **host** screenshot is from before Showdown X and Family play X were split; it still shows a single Strike button. The live host UI has two strike buttons plus **Win at** and **Lightning round**.
 
 ## What it does
 
@@ -38,6 +42,8 @@ npx serve .
 Open the URL (usually http://localhost:3000) for the **host**. Allow pop-ups, then **Open audience board** — share *that* window. Do not double-click the HTML (`file://` cannot fetch packs).
 
 Sounds play on the **host** PC (so the room hears them on your mic). Mute on the host page if hardware buzzers are enough.
+
+There is no cloud deploy and no login. See [`docs/ops/ENVIRONMENTS.md`](docs/ops/ENVIRONMENTS.md).
 
 ## Packs
 
